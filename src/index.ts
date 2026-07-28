@@ -7,9 +7,20 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Routes
+import categoryRouter from './routes/categories.js';
+app.use('/', categoryRouter)
+
+//Lägg till Router för products
+
+// DB connection
+import { connectToDatabase } from './config/db.js';
+connectToDatabase();
+
+// Server
 const PORT = 3000
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`)
 })
 
-//connect to db
+
