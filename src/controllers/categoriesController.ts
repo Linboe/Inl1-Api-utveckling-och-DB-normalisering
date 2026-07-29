@@ -17,7 +17,7 @@ export const fetchAllCategories = async (req: Request, res: Response) => {
 
         if (sort === 'asc') {
             sql += `ORDER BY name ASC`;
-          //  params = [`%${sort}%`]; <-- kolla vrf denna behövs
+            params = [`%${sort}%`]; 
         } else if (sort === 'desc') {
             sql += `ORDER BY name DESC`;
         }
@@ -85,8 +85,76 @@ export const fetchCategory = async (req: Request, res: Response) => {
     }
 };
 
-export const createCategory =  async (req: Request, res: Response) => {}
+export const createCategory =  async (req: Request, res: Response) => {
 
-export const updateCategory = async (req: Request, res: Response) => {}
+    const name = req.body.name;
+    if (name === undefined) {
+        res.status(400).json({ error: 'Name is required'})
+        return;
+    }
 
-export const deleteCategory = async (req: Request, res: Response) => {}
+    try {
+        const sql =
+          ` INSERT INTO categories (name)
+            VALUES (?)
+            `;
+
+        const [results] = await db.query<ResultSetHeader>(sql, [name]);
+        res.status(201).json({message: 'Category created', newCategory: {id: results.insertId, name: name}})
+    }   catch(error: unknown) {
+        const message =
+            error instanceof Error ? error.message : 'Unknown error';
+        res.status(500).json({ error: message });
+    }
+
+}
+
+export const updateCategory = async (req: Request, res: Response) => {
+    const name = req.body.name;
+    
+    if (name === undefined) {
+        res.status(400).json({ error: 'Name is required' });
+        return;
+    }
+
+    try {
+        const id = req.params.id;
+        const [result] = await db.query<ResultSetHeader>(`
+            UPDATE categories 
+            SET name = ?
+            WHERE id = ?`,
+        [name, id])
+
+        if (result.affectedRows === 0) {
+            res.status(404).json({ message: 'Category not found' });
+            return;
+        }
+
+        res.json({message: 'Category updated'})
+    }   catch(error:unknown) {
+        const message =
+            error instanceof Error ? error.message : 'Unknown error';
+        res.status(500).json({ error: message });
+    }
+}
+
+export const deleteCategory = async (req: Request, res: Response) => {
+      const id = req.params.id;
+
+      try {
+          const sql = `
+        DELETE FROM categories
+        WHERE id = ?`;
+
+          const [result] = await db.query<ResultSetHeader>(sql, [id]);
+          if (result.affectedRows === 0) {
+              res.status(404).json({ messgae: 'Category not found' });
+              return;
+          }
+          res.json({ message: 'Category deleted' });
+      } catch (error: unknown) {
+          const message =
+              error instanceof Error ? error.message : 'Unknow error';
+          res.status(500).json({ error: message });
+      }
+}
