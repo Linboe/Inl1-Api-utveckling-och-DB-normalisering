@@ -11,7 +11,8 @@ app.use(cors());
 import categoryRouter from './routes/categories.js';
 app.use('/', categoryRouter)
 
-//Lägg till Router för products
+import productRouter from './routes/products.js'
+app.use('/', productRouter);
 
 // DB connection
 import { connectToDatabase } from './config/db.js';

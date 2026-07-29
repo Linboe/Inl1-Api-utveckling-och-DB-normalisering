@@ -100,7 +100,7 @@ export const createCategory =  async (req: Request, res: Response) => {
             `;
 
         const [results] = await db.query<ResultSetHeader>(sql, [name]);
-        res.status(201).json({message: 'Category created', newCategory: {id: results.insertId, name: name}})
+        res.status(201).json({message: `Category '${name}' created`, newCategory: {id: results.insertId, name: name}})
     }   catch(error: unknown) {
         const message =
             error instanceof Error ? error.message : 'Unknown error';
@@ -130,7 +130,7 @@ export const updateCategory = async (req: Request, res: Response) => {
             return;
         }
 
-        res.json({message: 'Category updated'})
+        res.json({ message: `Category '${name}' updated` });
     }   catch(error:unknown) {
         const message =
             error instanceof Error ? error.message : 'Unknown error';
@@ -151,7 +151,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
               res.status(404).json({ messgae: 'Category not found' });
               return;
           }
-          res.json({ message: 'Category deleted' });
+          res.json({ message: `Category '${name}' deleted`});
       } catch (error: unknown) {
           const message =
               error instanceof Error ? error.message : 'Unknow error';
