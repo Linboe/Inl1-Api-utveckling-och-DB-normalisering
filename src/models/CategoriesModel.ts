@@ -1,14 +1,11 @@
 export class Category {
-    id?: number;
+    id?: number | undefined;
     name: string = '';
 
     constructor(name: string, id?: number) {
-        if (id !== undefined) {
-            this.id = id;
-        }
+        this.id = id;
         this.name = name;
     }
 }
 
-// kolla på alternativ för id? 
-// modell för products
+// kolla på alternativ för id? i ex math.random är det bra?
