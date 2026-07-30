@@ -11,15 +11,14 @@ export const fetchAllProducts = async (req: Request, res: Response) => {
         let params: any = [];
 
         if (search) {
-            sql += ` WHERE name LIKE ?`;
+            sql += ` WHERE title LIKE ?`;
             params = [`%${search}%`];
         }
 
         if (sort === 'asc') {
-            sql += `ORDER BY name ASC`;
-            params = [`%${sort}%`];
+            sql += ` ORDER BY title ASC`;
         } else if (sort === 'desc') {
-            sql += `ORDER BY name DESC`;
+            sql += ` ORDER BY title DESC`;
         }
 
         const [results] = await db.query<RowDataPacket[]>(sql, params);
@@ -52,7 +51,6 @@ export const fetchProduct = async (req: Request, res: Response) => {
     }
 };
 
-// img och desc är VALFRITT tänk på det
 export const createProduct = async (req: Request, res: Response) => {
     const title = req.body.title;
     const description = req.body.description ?? null; 

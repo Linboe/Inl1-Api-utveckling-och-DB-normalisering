@@ -16,10 +16,9 @@ export const fetchAllCategories = async (req: Request, res: Response) => {
         }
 
         if (sort === 'asc') {
-            sql += `ORDER BY name ASC`;
-            params = [`%${sort}%`]; 
+            sql += ` ORDER BY name ASC`;
         } else if (sort === 'desc') {
-            sql += `ORDER BY name DESC`;
+            sql += ` ORDER BY name DESC`;
         }
 
         const [results] = await db.query<RowDataPacket[]>(sql, params);
