@@ -57,7 +57,6 @@ export const createProduct = async (req: Request, res: Response) => {
     const stock = req.body.stock;
     const price = req.body.price;
     const image = req.body.image ?? null;
-    const created_at = req.body.created_at  
     const category_ids: number[] | undefined = req.body.category_ids;
 
 
@@ -76,6 +75,13 @@ export const createProduct = async (req: Request, res: Response) => {
         return;
     }
 
+     if (!category_ids || category_ids.length === 0) {
+         res.status(400).json({
+             error: 'at least one category_id is required',
+         });
+         return;
+     }
+
     try {
         const sql = ` INSERT INTO products (title, description, stock, price, image)
             VALUES (?, ?, ?, ?, ?)
@@ -91,20 +97,16 @@ export const createProduct = async (req: Request, res: Response) => {
 
         const newProductId = results.insertId;
 
-        // Om kategorier skickats med, koppla produkten till dem via korstabellen
-       if (category_ids && category_ids.length > 0) {
-           const linkSql = `
-        INSERT INTO categories_products (category_id, product_id)
-        VALUES ?
-    `;
+        const linkSql = `
+            INSERT INTO categories_products (category_id, product_id)
+            VALUES ?
+        `;
 
         const categoryProductRows = category_ids.map((categoryId) => [
             categoryId,
             newProductId,
         ]);
-
         await db.query(linkSql, [categoryProductRows]);
-    }
 
         res.status(201).json({
             message: `Product '${title}' created`,
@@ -115,9 +117,17 @@ export const createProduct = async (req: Request, res: Response) => {
                 stock,
                 price,
                 image,
+                category_ids
             },
         });
-    } catch (error: unknown) {
+    } catch (error: any) {
+         if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+             res.status(400).json({
+                 error: 'one or more category_ids do not exist',
+             });
+             return;
+         }
+
         const message =
             error instanceof Error ? error.message : 'Unknown error';
         res.status(500).json({ error: message });
