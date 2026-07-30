@@ -150,7 +150,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
               res.status(404).json({ messgae: 'Category not found' });
               return;
           }
-          res.json({ message: `Category '${name}' deleted`});
+          res.json({ message: `Category deleted`});
       } catch (error: unknown) {
           const message =
               error instanceof Error ? error.message : 'Unknow error';
