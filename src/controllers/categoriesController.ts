@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { db } from '../config/db.js';
+import type { ICategoryDBResponse } from '../models/ICategoryDBResonse.js';
 
 export const fetchAllCategories = async (req: Request, res: Response) => {
     const search = req.query.search;
@@ -34,7 +35,7 @@ export const fetchCategory = async (req: Request, res: Response) => {
     const id = req.params.id;
 
     try {
-        const [rows] = await db.query<RowDataPacket[]>( 
+        const [rows] = await db.query<ICategoryDBResponse[]>( 
             `SELECT 
                 categories.id AS category_id,
                 categories.name AS category_name,
