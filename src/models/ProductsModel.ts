@@ -25,5 +25,3 @@ export class Product {
         this.created_at = new Date().toString();
     }
 }
-
-// kolla på alternativ för id? i ex math.random är det bra?

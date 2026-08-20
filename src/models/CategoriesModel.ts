@@ -8,4 +8,3 @@ export class Category {
     }
 }
 
-// kolla på alternativ för id? i ex math.random är det bra?

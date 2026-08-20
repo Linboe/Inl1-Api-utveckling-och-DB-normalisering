@@ -34,7 +34,7 @@ export const fetchCategory = async (req: Request, res: Response) => {
     const id = req.params.id;
 
     try {
-        const [rows] = await db.query<RowDataPacket[]>( //BÖRJA KOLLA FEL HÄR
+        const [rows] = await db.query<RowDataPacket[]>( 
             `SELECT 
                 categories.id AS category_id,
                 categories.name AS category_name,
