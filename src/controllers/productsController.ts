@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
 import { db } from '../config/db.js';
+import type { IProductDBResponse } from '../models/IProductDBResponse.js';
 
 export const fetchAllProducts = async (req: Request, res: Response) => {
     const search = req.query.search;
@@ -21,7 +22,7 @@ export const fetchAllProducts = async (req: Request, res: Response) => {
             sql += ` ORDER BY title DESC`;
         }
 
-        const [results] = await db.query<RowDataPacket[]>(sql, params);
+        const [results] = await db.query<IProductDBResponse[]>(sql, params);
         res.json(results);
     } catch (error: unknown) {
         const message =
@@ -34,14 +35,15 @@ export const fetchProduct = async (req: Request, res: Response) => {
     const id = req.params.id;
 
     try {
-        const [results] = await db.query<RowDataPacket[]>(
+        const [results] = await db.query<IProductDBResponse[]>(
             `SELECT * FROM products WHERE id = ?`,
             [id],
         );
 
-        const category = results[0];
-        if (!category) {
+        const product = results[0];
+        if (!product) {
             res.status(404).json({ message: 'Product no found' });
+            return;
         }
         res.json(results);
     } catch (error: unknown) {
