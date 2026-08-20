@@ -58,32 +58,37 @@ export const fetchCategory = async (req: Request, res: Response) => {
 
         const category = rows[0];
         if (!category) {
-            res.status(404).json({ message: 'Category no found' });
+            res.status(404).json({ message: 'No category found' });
             return;
         }
 
-        let formatedCategory = {
-            id: category.category_id,
-            name: category.category_name,
-            products: rows.map((row) => ({
-                id: row.product_id,
-                category_id: row.product_category_id,
-                title: row.title,
-                description: row.description,
-                stock: row.stock,
-                price: row.price,
-                image: row.image,
-                created_at: row.created_at,
-            })),
-        };
-
-        res.json(formatedCategory);
-    } catch (error) {
-        const message =
-            error instanceof Error ? error.message : 'Unknown error';
-        res.status(500).json({ error: message });
+        res.json(formatedCategory(rows))
+    }   catch(error: unknown) {
+        const message = error  instanceof Error ? error.message : 'Unknown error'
+        res.status(500).json({error: message})
+        }
     }
-};
+
+        const formatedCategory = (rows: ICategoryDBResponse[]) => {
+              if (!rows[0]) {
+                  throw new Error('No rows found');
+              }
+
+            return {
+                id: rows[0].category_id,
+                name: rows[0].category_name,
+                products: rows.map((row) => ({
+                    id: row.product_id,
+                    title: row.title,
+                    description: row.description,
+                    stock: row.stock,
+                    price: row.price,
+                    image: row.image,
+                    created_at: row.created_at,
+                })),
+            };
+    } 
+    
 
 export const createCategory =  async (req: Request, res: Response) => {
 
